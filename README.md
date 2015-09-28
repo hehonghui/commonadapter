@@ -182,7 +182,7 @@ public class FeedRecyclerAdapter extends RecyclerAdapter<String, FeedRecyclerAda
 
 ## 3、使用代码
 
-```
+```java
 	// 初始化ListView
     private void initListView() {
         ListView listView = (ListView) findViewById(R.id.listview);
