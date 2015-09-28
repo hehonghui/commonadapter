@@ -5,7 +5,7 @@
 
 例如，我们要实现一个适用于AbsListView的Adapter时，通常代码如下: 
 
-```
+```java
 /**
  * Created by mrsimple on 28/9/15.
  */
@@ -66,13 +66,14 @@ public class FeedAdapter extends BaseAdapter {
 当Adapter的数量有几个时，就会反复编写getCount、getItem、getView等函数，但是它们的实现都是非常类似的，反复编写这类代码会使得代码重复率很高。Common Adapter对这些逻辑进行了二次封装，使得用户可以更方便的构建Adapter类，示例如下: 
 
 
-## 用于AbsListView的Adapter
+## 1、用于AbsListView的Adapter
 
-```
+```java
 /**
  * String表示这个Adapter的单个Item的数据类型, FeedListAdapter.FeedViewHolder表示该Adapter的ViewHolder类型。
  */
-public class FeedListAdapter extends ListViewAdapter<String, FeedListAdapter.FeedViewHolder> {
+public class FeedListAdapter extends 
+	ListViewAdapter<String, FeedListAdapter.FeedViewHolder> {
 
     public FeedListAdapter(List<String> datas) {
         addItems(datas);
@@ -117,11 +118,11 @@ public class FeedListAdapter extends ListViewAdapter<String, FeedListAdapter.Fee
 在ListViewAdapter中我们封装了数据集、getItem、getCount、getView等逻辑，用户只需要返回item 布局、构建具体的ViewHolder、绑定数据即可，代码量减少很多，逻辑也简化了很多。
 
 
-## 适用于RecyclerView的Adapter
+## 2、适用于RecyclerView的Adapter
 
 由于RecyclerView与AbsListView是两个类族，而它们的Adapter设计思路其实是很相似的。为了一致的用户体验，Common Adapter也封装了RecyclerView的Adapter，使得它的使用方式与AbsListView的Adapter基本保持一致。
 
-```
+```java
 /**
  * String表示这个Adapter的单个Item的数据类型, FeedListAdapter.FeedViewHolder表示该Adapter的ViewHolder类型。
  */
@@ -179,7 +180,7 @@ public class FeedRecyclerAdapter extends RecyclerAdapter<String, FeedRecyclerAda
 
 ```
 
-## 使用代码
+## 3、使用代码
 
 ```
 	// 初始化ListView
@@ -218,7 +219,7 @@ public class FeedRecyclerAdapter extends RecyclerAdapter<String, FeedRecyclerAda
 
 在使用Common Adapter时不需要担心数据源发生改变导致列表数据不更新的问题，因为Adapter基类中将数据集设置为final,所有的数据都会添加到该数据集中；在增加、减少数据时也不需要调用notifyDataSetChanged,只需要调用Adapter对应的的addItem或者remove函数即可。
 
-## 效果
+## 4、效果
 
 ![](./images/adapter.gif)
 
