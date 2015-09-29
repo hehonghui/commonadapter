@@ -12,6 +12,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.simple.commonadapter.viewholders.GodViewHolder;
+import com.simple.commonadapter.ListViewAdapter;
 import com.simple.commonadapter.RecyclerAdapter;
 
 import java.util.ArrayList;
@@ -49,9 +51,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    /**
+     *
+     */
     private void initListView() {
         ListView listView = (ListView) findViewById(R.id.listview);
-        final FeedListAdapter adapter = new FeedListAdapter(mockDatas());
+        final ListViewAdapter<String> adapter = new ListViewAdapter<String>(R.layout.list_item_type_1) {
+            @Override
+            protected void onBindData(GodViewHolder viewHolder, int position, String item) {
+                // 设置文本内容
+                viewHolder.setText(R.id.textview, item);
+            }
+        };
+        // 添加数据
+        adapter.addItems( mockDatas() );
         listView.setAdapter(adapter);
         // 设置ListView的点击事件
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -62,6 +75,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
+    /**
+     *
+     */
     private void initRecyclerView() {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         // 线性

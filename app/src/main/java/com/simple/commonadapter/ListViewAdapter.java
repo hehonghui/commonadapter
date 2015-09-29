@@ -1,12 +1,11 @@
 
 package com.simple.commonadapter;
 
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import com.simple.commonadapter.viewholders.ListViewHolder;
+import com.simple.commonadapter.viewholders.GodViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,12 +14,27 @@ import java.util.List;
 /**
  * Created by mrsimple on 25/9/15.
  */
-public abstract class ListViewAdapter<D, VH extends ListViewHolder> extends BaseAdapter {
+public abstract class ListViewAdapter<D> extends BaseAdapter {
 
     /**
      * 数据集
      */
     protected final List<D> mDataSet = new ArrayList<>();
+
+    private int mItemLayoutId;
+
+    /**
+     *
+     * @param layoutId
+     */
+    public ListViewAdapter(int layoutId) {
+        mItemLayoutId = layoutId;
+    }
+
+    public ListViewAdapter(int layoutId, List<D> datas) {
+        mItemLayoutId = layoutId;
+        mDataSet.addAll(datas) ;
+    }
 
     /**
      * @param item
@@ -102,19 +116,8 @@ public abstract class ListViewAdapter<D, VH extends ListViewHolder> extends Base
      * @param type
      * @return
      */
-    protected abstract int getItemLayout(int type);
-
-    /**
-     * 解析布局资源
-     *
-     * @param viewGroup
-     * @param viewType
-     * @return
-     */
-    protected View inflateItemView(ViewGroup viewGroup, int viewType) {
-        int itemLayout = getItemLayout(viewType);
-        return LayoutInflater.from(viewGroup.getContext()).inflate(itemLayout,
-                viewGroup, false);
+    protected int getItemLayout(int type) {
+        return mItemLayoutId;
     }
 
     /**
@@ -127,27 +130,11 @@ public abstract class ListViewAdapter<D, VH extends ListViewHolder> extends Base
      */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        VH viewHolder = null;
-        if (convertView == null) {
-            final int viewType = getItemViewType(position);
-            convertView = inflateItemView(parent, viewType);
-            viewHolder = newViewHolder(convertView);
-            convertView.setTag(viewHolder);
-        } else {
-            viewHolder = (VH) convertView.getTag();
-        }
+        GodViewHolder viewHolder = GodViewHolder.get(convertView, parent, mItemLayoutId);
         // 绑定数据
-        bindDataToItemView(viewHolder, position, getItem(position));
-        return convertView;
+        onBindData(viewHolder, position, getItem(position));
+        return viewHolder.getItemView();
     }
-
-    /**
-     * 创建具体的ViewHolder
-     *
-     * @param itemView ItemView根布局
-     * @return
-     */
-    protected abstract VH newViewHolder(View itemView);
 
     /**
      * 绑定数据到Item View上
@@ -156,6 +143,6 @@ public abstract class ListViewAdapter<D, VH extends ListViewHolder> extends Base
      * @param position   数据的位置
      * @param item       数据项
      */
-    protected abstract void bindDataToItemView(VH viewHolder, int position, D item);
+    protected abstract void onBindData(GodViewHolder viewHolder, int position, D item);
 
 }
