@@ -14,24 +14,29 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 /**
+ * ViewHolder操作子视图的实现类
  * Created by mrsimple on 29/9/15.
  */
 public class ViewHolderImpl {
 
     /**
-     *
+     * 缓存子视图,key为view id, 值为View。
      */
     private SparseArray<View> mCahceViews = new SparseArray<View>();
     /**
-     *
+     * Item View
      */
-    private View mItemView;
+    View mItemView;
 
     /**
      * @param itemView
      */
     ViewHolderImpl(View itemView) {
         mItemView = itemView;
+    }
+
+    public View getItemView() {
+        return mItemView;
     }
 
     /**
@@ -117,10 +122,9 @@ public class ViewHolderImpl {
     }
 
 
-    public void setImageDrawable(int viewId, Drawable bitmap) {
+    public void setImageDrawable(int viewId, Drawable drawable) {
         ImageView target = findViewById(viewId);
-        target.setImageDrawable(bitmap);
-
+        target.setImageDrawable(drawable);
     }
 
 

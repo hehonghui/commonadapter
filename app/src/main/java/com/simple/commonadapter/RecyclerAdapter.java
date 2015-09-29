@@ -6,16 +6,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.simple.commonadapter.viewholders.RecyclerViewHolder;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * 用于RecyclerView的Adapter
+ *
  * Created by mrsimple on 25/9/15.
  */
-public abstract class RecyclerAdapter<D, VH extends RecyclerView.ViewHolder>
-        extends RecyclerView.Adapter<VH> {
-
+public abstract class RecyclerAdapter<D>
+        extends RecyclerView.Adapter<RecyclerViewHolder> {
     /**
      * 数据集
      */
@@ -24,6 +26,28 @@ public abstract class RecyclerAdapter<D, VH extends RecyclerView.ViewHolder>
      * 单击事件
      */
     protected OnItemClickListener mOnItemClickListener;
+    /**
+     * Item Layout的资源id
+     */
+    private int mItemLayoutId;
+
+    /**
+     *
+     * @param layoutId 布局id
+     */
+    public RecyclerAdapter(int layoutId) {
+        mItemLayoutId = layoutId ;
+    }
+
+    /**
+     *
+     * @param layoutId 布局id
+     * @param datas 数据集
+     */
+    public RecyclerAdapter(int layoutId, List<D> datas) {
+        mItemLayoutId = layoutId ;
+        addItems( datas );
+    }
 
     /**
      * 追加单个数据
@@ -102,10 +126,10 @@ public abstract class RecyclerAdapter<D, VH extends RecyclerView.ViewHolder>
     }
 
     @Override
-    public void onBindViewHolder(VH holder, int position) {
+    public void onBindViewHolder(RecyclerViewHolder holder, int position) {
         final D item = getItem(position);
         // 绑定数据
-        bindDataToItemView(holder, position, item);
+        onBindData(holder, position, item);
         // 设置单击事件
         setupItemClickListener(holder, position);
     }
@@ -125,17 +149,9 @@ public abstract class RecyclerAdapter<D, VH extends RecyclerView.ViewHolder>
     }
 
     @Override
-    public VH onCreateViewHolder(ViewGroup parent, int viewType) {
-        return newViewHolder(inflateItemView(parent, viewType));
+    public RecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        return  new RecyclerViewHolder(inflateItemView(parent, viewType)) ;
     }
-
-    /**
-     * 创建具体的ViewHolder
-     *
-     * @param itemView ItemView根布局
-     * @return
-     */
-    protected abstract VH newViewHolder(View itemView);
 
     /**
      * 根据Type返回布局资源
@@ -143,7 +159,9 @@ public abstract class RecyclerAdapter<D, VH extends RecyclerView.ViewHolder>
      * @param type
      * @return
      */
-    protected abstract int getItemLayout(int type);
+    protected  int getItemLayout(int type) {
+        return  mItemLayoutId ;
+    }
 
 
     /**
@@ -153,14 +171,14 @@ public abstract class RecyclerAdapter<D, VH extends RecyclerView.ViewHolder>
      * @param position   数据的位置
      * @param item       数据项
      */
-    protected abstract void bindDataToItemView(VH viewHolder, int position, D item);
+    protected abstract void onBindData(RecyclerViewHolder viewHolder, int position, D item);
 
 
     /**
      * @param viewHolder
      * @param position
      */
-    protected void setupItemClickListener(VH viewHolder, final int position) {
+    protected void setupItemClickListener(RecyclerViewHolder viewHolder, final int position) {
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

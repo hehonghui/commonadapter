@@ -1,45 +1,61 @@
 package com.simple.commonadapter.viewholders;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Checkable;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.RatingBar;
-import android.widget.TextView;
 
 /**
  * 适用于RecyclerView的ViewHolder
  * Created by mrsimple on 25/9/15.
  */
-public abstract class RecyclerViewHolder extends RecyclerView.ViewHolder {
+public class RecyclerViewHolder extends RecyclerView.ViewHolder {
+    /**
+     * ViewHolder实现类,桥接模式适配AbsListView与RecyclerView的二维变化
+     */
+    ViewHolderImpl mHolderImpl ;
 
-    GodViewHolder mGodViewHolder ;
-
+    /**
+     *
+     * @param itemView
+     */
     public RecyclerViewHolder(View itemView) {
         super(itemView);
-        mGodViewHolder = new GodViewHolder( itemView ) ;
+        mHolderImpl = new ViewHolderImpl( itemView ) ;
+    }
+
+    public Context getContext() {
+        return  mHolderImpl.mItemView.getContext() ;
+    }
+
+    /**
+     * @param viewId
+     * @param <T>
+     * @return
+     */
+    public <T extends View> T findViewById(int viewId) {
+        return mHolderImpl.findViewById(viewId);
+    }
+
+    public View getItemView() {
+        return mHolderImpl.getItemView();
     }
 
     public RecyclerViewHolder setText(int viewId, int stringId) {
-        TextView textView = mGodViewHolder.findViewById(viewId);
-        textView.setText(stringId);
+        mHolderImpl.setText(viewId, stringId);
         return this;
     }
 
     public RecyclerViewHolder setText(int viewId, String text) {
-        TextView textView = mGodViewHolder.findViewById(viewId);
-        textView.setText(text);
+        mHolderImpl.setText(viewId, text);
         return this;
     }
 
     public RecyclerViewHolder setTextColor(int viewId, int color) {
-        TextView textView = mGodViewHolder.findViewById(viewId);
-        textView.setTextColor(color);
+        mHolderImpl.setTextColor(viewId, color);
         return this;
     }
 
@@ -48,8 +64,7 @@ public abstract class RecyclerViewHolder extends RecyclerView.ViewHolder {
      * @param color
      */
     public RecyclerViewHolder setBackgroundColor(int viewId, int color) {
-        View target = mGodViewHolder.findViewById(viewId);
-        target.setBackgroundColor(color);
+        mHolderImpl.setBackgroundColor(viewId, color);
         return this;
     }
 
@@ -59,8 +74,7 @@ public abstract class RecyclerViewHolder extends RecyclerView.ViewHolder {
      * @param resId
      */
     public RecyclerViewHolder setBackgroundResource(int viewId, int resId) {
-        View target = mGodViewHolder.findViewById(viewId);
-        target.setBackgroundResource(resId);
+        mHolderImpl.setBackgroundResource(viewId, resId);
         return this;
     }
 
@@ -70,8 +84,7 @@ public abstract class RecyclerViewHolder extends RecyclerView.ViewHolder {
      * @param drawable
      */
     public RecyclerViewHolder setBackgroundDrawable(int viewId, Drawable drawable) {
-        View target = mGodViewHolder.findViewById(viewId);
-        target.setBackgroundDrawable(drawable);
+        mHolderImpl.setBackgroundDrawable(viewId, drawable);
         return this;
     }
 
@@ -81,123 +94,102 @@ public abstract class RecyclerViewHolder extends RecyclerView.ViewHolder {
      */
     @TargetApi(16)
     public RecyclerViewHolder setBackground(int viewId, Drawable drawable) {
-        View target = mGodViewHolder.findViewById(viewId);
-        target.setBackground(drawable);
+        mHolderImpl.setBackground(viewId, drawable);
         return this;
     }
 
 
     public RecyclerViewHolder setImageBitmap(int viewId, Bitmap bitmap) {
-        ImageView target = mGodViewHolder.findViewById(viewId);
-        target.setImageBitmap(bitmap);
+        mHolderImpl.setImageBitmap(viewId, bitmap);
         return this;
     }
 
 
     public RecyclerViewHolder setImageResource(int viewId, int resId) {
-        ImageView target = mGodViewHolder.findViewById(viewId);
-        target.setImageResource(resId);
+        mHolderImpl.setImageResource(viewId, resId);
         return this;
     }
 
-
-    public RecyclerViewHolder setImageDrawable(int viewId, Drawable bitmap) {
-        ImageView target = mGodViewHolder.findViewById(viewId);
-        target.setImageDrawable(bitmap);
+    public RecyclerViewHolder setImageDrawable(int viewId, Drawable drawable) {
+        mHolderImpl.setImageDrawable(viewId, drawable);
         return this;
     }
 
 
     public RecyclerViewHolder setImageDrawable(int viewId, Uri uri) {
-        ImageView target = mGodViewHolder.findViewById(viewId);
-        target.setImageURI(uri);
+        mHolderImpl.setImageDrawable(viewId, uri);
         return this;
     }
 
 
     @TargetApi(16)
     public RecyclerViewHolder setImageAlpha(int viewId, int alpha) {
-        ImageView target = mGodViewHolder.findViewById(viewId);
-        target.setImageAlpha(alpha);
+        mHolderImpl.setImageAlpha(viewId, alpha);
         return this;
     }
 
     public RecyclerViewHolder setChecked(int viewId, boolean checked) {
-        Checkable checkable = mGodViewHolder.findViewById(viewId);
-        checkable.setChecked(checked);
+        mHolderImpl.setChecked(viewId, checked);
         return this;
     }
 
 
     public RecyclerViewHolder setProgress(int viewId, int progress) {
-        ProgressBar view = mGodViewHolder.findViewById(viewId);
-        view.setProgress(progress);
+        mHolderImpl.setProgress(viewId, progress);
         return this;
     }
 
     public RecyclerViewHolder setProgress(int viewId, int progress, int max) {
-        ProgressBar view = mGodViewHolder.findViewById(viewId);
-        view.setMax(max);
-        view.setProgress(progress);
+        mHolderImpl.setProgress(viewId, progress, max);
         return this;
     }
 
     public RecyclerViewHolder setMax(int viewId, int max) {
-        ProgressBar view = mGodViewHolder.findViewById(viewId);
-        view.setMax(max);
+        mHolderImpl.setMax(viewId, max);
         return this;
     }
 
     public RecyclerViewHolder setRating(int viewId, float rating) {
-        RatingBar view = mGodViewHolder.findViewById(viewId);
-        view.setRating(rating);
+        mHolderImpl.setRating(viewId, rating);
         return this;
     }
 
 
     public RecyclerViewHolder setRating(int viewId, float rating, int max) {
-        RatingBar view = mGodViewHolder.findViewById(viewId);
-        view.setMax(max);
-        view.setRating(rating);
+        mHolderImpl.setRating(viewId, rating, max);
         return this;
     }
 
     public RecyclerViewHolder setOnClickListener(int viewId, View.OnClickListener listener) {
-        View view = mGodViewHolder.findViewById(viewId);
-        view.setOnClickListener(listener);
+        mHolderImpl.setOnClickListener(viewId, listener);
         return this;
     }
 
     public RecyclerViewHolder setOnTouchListener(int viewId, View.OnTouchListener listener) {
-        View view = mGodViewHolder.findViewById(viewId);
-        view.setOnTouchListener(listener);
+        mHolderImpl.setOnTouchListener(viewId, listener);
         return this;
     }
 
 
     public RecyclerViewHolder setOnLongClickListener(int viewId, View.OnLongClickListener listener) {
-        View view = mGodViewHolder.findViewById(viewId);
-        view.setOnLongClickListener(listener);
+        mHolderImpl.setOnLongClickListener(viewId, listener);
         return this;
     }
 
     public RecyclerViewHolder setOnItemClickListener(int viewId, AdapterView.OnItemClickListener listener) {
-        AdapterView view = mGodViewHolder.findViewById(viewId);
-        view.setOnItemClickListener(listener);
+        mHolderImpl.setOnItemClickListener(viewId, listener);
         return this;
     }
 
 
     public RecyclerViewHolder setOnItemLongClickListener(int viewId, AdapterView.OnItemLongClickListener listener) {
-        AdapterView view = mGodViewHolder.findViewById(viewId);
-        view.setOnItemLongClickListener(listener);
+        mHolderImpl.setOnItemLongClickListener(viewId, listener);
         return this;
     }
 
 
     public RecyclerViewHolder setOnItemSelectedClickListener(int viewId, AdapterView.OnItemSelectedListener listener) {
-        AdapterView view = mGodViewHolder.findViewById(viewId);
-        view.setOnItemSelectedListener(listener);
+        mHolderImpl.setOnItemSelectedClickListener(viewId, listener);
         return this;
     }
 }

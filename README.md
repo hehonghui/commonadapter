@@ -1,7 +1,8 @@
 # Android Common Adapter 
 
->该库用于简化AbsListView类型与RecyclerView的Adapter构建，在ListViewAdapter和RecyclerAdapter封装了固定的业务逻辑，使得用户只需要实现变化的部分即可，简化代码，避免重复的模板代码。
-
+> 该库用于简化AbsListView类型与RecyclerView的Adapter构建，在ListViewAdapter和RecyclerAdapter封装了固定的业务逻辑，使得用户只需要实现变化的部分即可，简化代码，避免重复的模板代码。
+> 
+> 该库的接口参考了[base-adapter-helper](https://github.com/JoanZapata/base-adapter-helper)，在此基础上添加了RecyclerView Adapter的支持。两种类型的Adapter之间通过桥接模式简化代码,参考[ViewHolderImpl](./app/src/main/java/com/simple/commonadapter/viewholders/ViewHolderImpl.java)。
 
 例如，我们要实现一个适用于AbsListView的Adapter时，通常代码如下: 
 
@@ -66,128 +67,25 @@ public class FeedAdapter extends BaseAdapter {
 当Adapter的数量有几个时，就会反复编写getCount、getItem、getView等函数，但是它们的实现都是非常类似的，反复编写这类代码会使得代码重复率很高。Common Adapter对这些逻辑进行了二次封装，使得用户可以更方便的构建Adapter类，示例如下: 
 
 
-## 1、用于AbsListView的Adapter
+## 1、使用代码
 
 ```java
-/**
- * String表示这个Adapter的单个Item的数据类型, FeedListAdapter.FeedViewHolder表示该Adapter的ViewHolder类型。
- */
-public class FeedListAdapter extends 
-	ListViewAdapter<String, FeedListAdapter.FeedViewHolder> {
-
-    public FeedListAdapter(List<String> datas) {
-        addItems(datas);
-    }
-
-	// 绑定数据到View上
-    @Override
-    protected void bindDataToItemView(FeedViewHolder viewHolder, int position, String item) {
-        viewHolder.textView.setText(item);
-    }
-
-	// 返回Item 布局
-    @Override
-    protected int getItemLayout(int type) {
-        return R.layout.list_item_type_1;
-    }
-
-	// 创建ViewHolder
-    @Override
-    protected FeedViewHolder newViewHolder(View itemView) {
-        return new FeedViewHolder(itemView);
-    }
-
     /**
-     * Feed ViewHolder类型,继承自 ListViewHolder
+     * 初始化ListView
      */
-    public static class FeedViewHolder extends ListViewHolder {
-        public ImageView imageView;
-        public TextView textView;
-
-        public FeedViewHolder(View itemView) {
-            super(itemView);
-            imageView = findViewById(R.id.imageview);
-            textView = findViewById(R.id.textview);
-        }
-    }
-
-}
-
-```
-
-在ListViewAdapter中我们封装了数据集、getItem、getCount、getView等逻辑，用户只需要返回item 布局、构建具体的ViewHolder、绑定数据即可，代码量减少很多，逻辑也简化了很多。
-
-
-## 2、适用于RecyclerView的Adapter
-
-由于RecyclerView与AbsListView是两个类族，而它们的Adapter设计思路其实是很相似的。为了一致的用户体验，Common Adapter也封装了RecyclerView的Adapter，使得它的使用方式与AbsListView的Adapter基本保持一致。
-
-```java
-/**
- * String表示这个Adapter的单个Item的数据类型, FeedListAdapter.FeedViewHolder表示该Adapter的ViewHolder类型。
- */
-public class FeedRecyclerAdapter extends RecyclerAdapter<String, FeedRecyclerAdapter.FeedRecyclerViewHolder> {
-
-    public FeedRecyclerAdapter(List<String> datas) {
-        addItems( datas );
-    }
-
-	// 绑定数据
-    @Override
-    protected void bindDataToItemView(
-    	FeedRecyclerViewHolder viewHolder, int position, String item) {
-        viewHolder.textView.setText(item);
-    }
-
-	// 返回view type
-    @Override
-    public int getItemViewType(int position) {
-        return position % 5 == 0 ? 2 : 1;
-    }
-
-	// 根据view type返回布局
-    @Override
-    protected int getItemLayout(int type) {
-        if ( type == 2 ) {
-            return  R.layout.list_item_type_2 ;
-        }
-        return R.layout.list_item_type_1;
-    }
-
-	// 返回具体的ViewHolder
-    @Override
-    protected FeedRecyclerViewHolder newViewHolder(View itemView) {
-        return new FeedRecyclerViewHolder(itemView);
-    }
-
-    /**
-     * Feed ViewHolder 继承自 RecyclerViewHolder【 注意与AbsListView的ViewHolder是继承自ListViewHolder 】
-     */
-    public static class FeedRecyclerViewHolder 
-    			extends RecyclerViewHolder {
-        public ImageView imageView;
-        public TextView textView;
-
-        public FeedRecyclerViewHolder(View itemView) {
-            super(itemView);
-
-            imageView = findViewById(R.id.imageview);
-            textView = findViewById(R.id.textview);
-        }
-    }
-
-}
-
-```
-
-## 3、使用代码
-
-```java
-	// 初始化ListView
     private void initListView() {
         ListView listView = (ListView) findViewById(R.id.listview);
-        // 适用于AbsListView的Adapter
-        final FeedListAdapter adapter = new FeedListAdapter(mockDatas());
+        final ListViewAdapter<String> adapter = new ListViewAdapter<String>(R.layout.list_item_type_1) {
+            @Override
+            protected void onBindData(GodViewHolder viewHolder, int position, String item) {
+
+                viewHolder
+                        .setText(R.id.textview, item)             // 设置文本内容
+                        .setImageResource(R.id.imageview, R.drawable.big_smile) ; // 设置图片资源
+            }
+        };
+        // 添加数据
+        adapter.addItems(mockDatas());
         listView.setAdapter(adapter);
         // 设置ListView的点击事件
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -197,14 +95,48 @@ public class FeedRecyclerAdapter extends RecyclerAdapter<String, FeedRecyclerAda
             }
         });
     }
+```
 
-	// 初始化RecyclerView
+针对于AbsListView类族的组件需要使用ListViewAdapter类型的Adapter，泛型参数就是单个实体类的数据类型。在构造ListViewAdapter对象时覆写onBindData函数完成数据的绑定即可。GodViewHolder中包含了各类View属性的设置，具体请直接查看GodViewHolder中的setter函数。
+
+对于RecyclerView则需要使用RecyclerAdapter，使用方式与ListViewAdapter类似，示例代码如下所示。
+
+```java
+    /**
+     * 初始化RecyclerView
+     */
     private void initRecyclerView() {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         // 线性
         recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+
         // 初始化adapter
-        final FeedRecyclerAdapter adapter = new FeedRecyclerAdapter(mockDatas());
+        final RecyclerAdapter<String> adapter = new RecyclerAdapter<String>(R.layout.list_item_type_1, mockDatas()) {
+            @Override
+            protected void onBindData(RecyclerViewHolder viewHolder, int position, String item) {
+                viewHolder.setText(R.id.textview, item);
+                ImageView imageView = viewHolder.findViewById(R.id.imageview);
+                Glide
+                        .with(viewHolder.getContext())
+                        .load("http://img4.duitang.com/uploads/blog/201402/19/20140219232639_Cda2j.thumb.600_0.jpeg")
+                        .into(imageView);
+            }
+
+            // 如果有多个布局,那么覆写getItemViewType与getItemLayout即可
+            @Override
+            public int getItemViewType(int position) {
+                return position % 5 == 0 ? 2 : 1;
+            }
+
+            @Override
+            protected int getItemLayout(int type) {
+                if (type == 2) {
+                    return R.layout.list_item_type_2;
+                }
+                return R.layout.list_item_type_1;
+            }
+        };
+
         // 设置RecyclerView的点击事件
         adapter.setOnItemClickListener(new RecyclerAdapter.OnItemClickListener() {
             @Override
@@ -219,7 +151,7 @@ public class FeedRecyclerAdapter extends RecyclerAdapter<String, FeedRecyclerAda
 
 在使用Common Adapter时不需要担心数据源发生改变导致列表数据不更新的问题，因为Adapter基类中将数据集设置为final,所有的数据都会添加到该数据集中；在增加、减少数据时也不需要调用notifyDataSetChanged,只需要调用Adapter对应的的addItem或者remove函数即可。
 
-## 4、效果
+## 2、效果
 
 ![](./images/adapter.gif)
 

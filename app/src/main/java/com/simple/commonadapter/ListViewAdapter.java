@@ -20,7 +20,9 @@ public abstract class ListViewAdapter<D> extends BaseAdapter {
      * 数据集
      */
     protected final List<D> mDataSet = new ArrayList<>();
-
+    /**
+     * Item Layout
+     */
     private int mItemLayoutId;
 
     /**
@@ -130,7 +132,8 @@ public abstract class ListViewAdapter<D> extends BaseAdapter {
      */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        GodViewHolder viewHolder = GodViewHolder.get(convertView, parent, mItemLayoutId);
+        int viewType = getItemViewType( position ) ;
+        GodViewHolder viewHolder = GodViewHolder.get(convertView, parent, getItemLayout(viewType));
         // 绑定数据
         onBindData(viewHolder, position, getItem(position));
         return viewHolder.getItemView();
