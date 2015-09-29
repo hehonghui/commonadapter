@@ -2,7 +2,7 @@
 
 > 该库用于简化AbsListView类型与RecyclerView的Adapter构建，在ListViewAdapter和RecyclerAdapter封装了固定的业务逻辑，使得用户只需要实现变化的部分即可，简化代码，避免重复的模板代码。
 > 
-> 该库的接口参考了[base-adapter-helper](https://github.com/JoanZapata/base-adapter-helper)，在此基础上添加了RecyclerView Adapter的支持。两种类型的Adapter之间通过桥接模式简化代码,参考[ViewHolderImpl](./app/src/main/java/com/simple/commonadapter/viewholders/ViewHolderImpl.java)。
+> 该库的接口参考了[base-adapter-helper](https://github.com/JoanZapata/base-adapter-helper)，在此基础上添加了RecyclerView Adapter的支持。两种类型的Adapter之间通过桥接模式简化代码,参考[ViewHolderImpl](https://github.com/bboyfeiyu/commonadapter/blob/master/adapter/src/main/java/com/simple/commonadapter/viewholders/ViewHolderImpl.java)。
 
 例如，我们要实现一个适用于AbsListView的Adapter时，通常代码如下: 
 
