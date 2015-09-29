@@ -71,16 +71,11 @@ public class FeedAdapter extends BaseAdapter {
 在项目的build.gradle中添加上如下依赖: 
 
 ```xml
-repositories {
-    maven {
-        url  "http://dl.bintray.com/bboyfeiyu/maven"
-    }
-}
 
 dependencies {
-	// 其他依赖
+    // 其他依赖
 	
-	// Common Adapter的依赖
+    // Common Adapter的依赖
     compile 'org.simple:adapter:1.0.0'
 }
 ```
