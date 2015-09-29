@@ -33,7 +33,7 @@ dependencies {
 
 def siteUrl = 'https://github.com/bboyfeiyu/commonadapter'      // 项目的主页
 def gitUrl = 'git@github.com:bboyfeiyu/commonadapter.git'   // Git仓库的url
-group = "com.simple.commonadapter"                                        // Maven Group ID for the artifact，一般填你唯一的包名
+group = "org.simple"                                        // Maven Group ID for the artifact，一般填你唯一的包名
 install {
     repositories.mavenInstaller {
         // This generates POM.xml with proper parameters

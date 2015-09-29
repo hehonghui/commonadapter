@@ -66,6 +66,24 @@ public class FeedAdapter extends BaseAdapter {
 ```
 当Adapter的数量有几个时，就会反复编写getCount、getItem、getView等函数，但是它们的实现都是非常类似的，反复编写这类代码会使得代码重复率很高。Common Adapter对这些逻辑进行了二次封装，使得用户可以更方便的构建Adapter类，示例如下: 
 
+## 添加Gradle依赖
+
+在项目的build.gradle中添加上如下依赖: 
+
+```xml
+repositories {
+    maven {
+        url  "http://dl.bintray.com/bboyfeiyu/maven"
+    }
+}
+
+dependencies {
+	// 其他依赖
+	
+	// Common Adapter的依赖
+    compile 'org.simple:adapter:1.0.0'
+}
+```
 
 ## 1、使用代码
 
