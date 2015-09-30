@@ -4,68 +4,6 @@
 > 
 > 该库的接口参考了[base-adapter-helper](https://github.com/JoanZapata/base-adapter-helper)，在此基础上添加了RecyclerView Adapter的支持。两种类型的Adapter之间通过桥接模式简化代码,参考[ViewHolderImpl](https://github.com/bboyfeiyu/commonadapter/blob/master/adapter/src/main/java/com/simple/commonadapter/viewholders/ViewHolderImpl.java)。
 
-例如，我们要实现一个适用于AbsListView的Adapter时，通常代码如下: 
-
-```java
-/**
- * Created by mrsimple on 28/9/15.
- */
-public class FeedAdapter extends BaseAdapter {
-    /**
-     * 数据集
-     */
-    protected List<String> mDataSet = new ArrayList<String>();
-
-    public FeedAdapter(List<String> datas) {
-        mDataSet = datas;
-    }
-
-    @Override
-    public String getItem(int position) {
-        return mDataSet.get(position);
-    }
-
-    @Override
-    public int getCount() {
-        return mDataSet.size();
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        FeedViewHolder viewHolder = null;
-        if (convertView == null) {
-            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_type_1, parent, false);
-            viewHolder = new FeedViewHolder(convertView);
-            convertView.setTag(viewHolder);
-        } else {
-            viewHolder = (FeedViewHolder) convertView.getTag();
-        }
-        // 设置数据
-        viewHolder.textView.setText( getItem(position));
-        return convertView;
-    }
-
-    /**
-     * Feed ViewHolder
-     */
-    public static class FeedViewHolder {
-        public ImageView imageView;
-        public TextView textView;
-
-        public FeedViewHolder(View itemView) {
-            imageView = (ImageView) itemView.findViewById(R.id.imageview);
-            textView = (TextView) itemView.findViewById(R.id.textview);
-        }
-    }
-}
-```
-当Adapter的数量有几个时，就会反复编写getCount、getItem、getView等函数，但是它们的实现都是非常类似的，反复编写这类代码会使得代码重复率很高。Common Adapter对这些逻辑进行了二次封装，使得用户可以更方便的构建Adapter类，示例如下: 
-
 ## 添加Gradle依赖
 
 在项目的build.gradle中添加上如下依赖: 
