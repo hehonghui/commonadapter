@@ -111,6 +111,14 @@ public abstract class RecyclerAdapter<D>
     }
 
     /**
+     * clear all data
+     */
+    public void clear() {
+        mDataSet.clear();
+        notifyDataSetChanged();
+    }
+
+    /**
      * 获取指定位置的数据项
      *
      * @param position

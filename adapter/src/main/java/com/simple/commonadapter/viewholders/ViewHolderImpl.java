@@ -167,6 +167,11 @@ public class ViewHolderImpl {
         view.setRating(rating);
     }
 
+    public void setVisibility(int viewId, int visible) {
+        View view = findViewById(viewId);
+        view.setVisibility(visible);
+    }
+
 
     public void setRating(int viewId, float rating, int max) {
         RatingBar view = findViewById(viewId);

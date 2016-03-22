@@ -12,10 +12,11 @@ import java.util.List;
 
 
 /**
+ * 适用于ListView的 通用 Adapter
+ *
  * Created by mrsimple on 25/9/15.
  */
 public abstract class ListViewAdapter<D> extends BaseAdapter {
-
     /**
      * 数据集
      */
@@ -83,6 +84,14 @@ public abstract class ListViewAdapter<D> extends BaseAdapter {
      */
     public void remove(D item) {
         mDataSet.remove(item);
+        notifyDataSetChanged();
+    }
+
+    /**
+     * clear all data
+     */
+    public void clear() {
+        mDataSet.clear();
         notifyDataSetChanged();
     }
 

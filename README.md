@@ -81,7 +81,7 @@ dependencies {
 	// 其他依赖
 	
 	// Common Adapter的依赖
-    compile 'org.simple:adapter:1.0.0'
+    compile 'org.simple:adapter:1.0.1'
 }
 ```
 
@@ -172,8 +172,4 @@ dependencies {
 ## 2、效果
 
 ![](./images/adapter.gif)
-
-
-
-
 

@@ -20,11 +20,14 @@ android {
 }
 
 dependencies {
-    compile project(':adapter')
+//    compile project(':adapter')
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.0.1'
     compile 'com.android.support:design:23.0.1'
 
     compile 'com.github.bumptech.glide:glide:3.6.1'
+
+    // Common Adapter的依赖
+    compile 'org.simple:adapter:1.0.1'
 }

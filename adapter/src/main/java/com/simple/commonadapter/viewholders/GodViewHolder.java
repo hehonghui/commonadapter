@@ -183,6 +183,11 @@ public class GodViewHolder {
         return this;
     }
 
+    public GodViewHolder setVisibility(int viewId, int visible) {
+        mHolderImpl.setVisibility(viewId, visible);
+        return this;
+    }
+
     public GodViewHolder setOnClickListener(int viewId, View.OnClickListener listener) {
         mHolderImpl.setOnClickListener(viewId, listener);
         return this;

@@ -154,6 +154,11 @@ public class RecyclerViewHolder extends RecyclerView.ViewHolder {
         return this;
     }
 
+    public RecyclerViewHolder setVisibility(int viewId, int visible) {
+        mHolderImpl.setVisibility(viewId, visible);
+        return this;
+    }
+
 
     public RecyclerViewHolder setRating(int viewId, float rating, int max) {
         mHolderImpl.setRating(viewId, rating, max);
