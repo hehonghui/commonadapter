@@ -1,5 +1,6 @@
 package simple.com.demo;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -14,9 +15,9 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.simple.commonadapter.viewholders.GodViewHolder;
 import com.simple.commonadapter.ListViewAdapter;
 import com.simple.commonadapter.RecyclerAdapter;
+import com.simple.commonadapter.viewholders.GodViewHolder;
 import com.simple.commonadapter.viewholders.RecyclerViewHolder;
 
 import java.util.ArrayList;
@@ -43,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
 
         initListView();
         initRecyclerView();
+
+        startActivity(new Intent(this, MultiImageActivity.class));
     }
 
     private List<String> mockDatas() {
@@ -65,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
 
                 viewHolder
                         .setText(R.id.textview, item)             // 设置文本内容
-                        .setImageResource(R.id.imageview, R.drawable.big_smile) ; // 设置图片资源
+                        .setImageResource(R.id.imageview, R.drawable.big_smile); // 设置图片资源
             }
         };
         // 添加数据
