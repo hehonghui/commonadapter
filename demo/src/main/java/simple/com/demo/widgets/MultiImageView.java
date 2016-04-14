@@ -8,6 +8,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -26,9 +27,21 @@ import simple.com.demo.R;
  * Created by mrsimple on 13/4/16.
  */
 public class MultiImageView extends View {
+    /**
+     * 图片集合
+     */
     private List<ImageItem> mImages = new ArrayList<>();
+    /**
+     * loadding中的图片
+     */
     private Bitmap mLoadingBmp;
+    /**
+     * 单张图片的宽度
+     */
     private int mSingleImageWidth;
+    /**
+     * 视图的高度
+     */
     private int mViewHeight;
     /**
      * 图片矩阵对象,用于对图片进行缩放
@@ -39,6 +52,11 @@ public class MultiImageView extends View {
      */
     private int mHorizontalSpacing = 10;
     private Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private int pLeft;
+    private int pTop;
+    private OnImageClickListener mImageClickListener;
+    static BitmapFactory.Options sOptions = new BitmapFactory.Options();
+
 
     public MultiImageView(Context context) {
         this(context, null);
@@ -50,21 +68,28 @@ public class MultiImageView extends View {
 
     public MultiImageView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        mLoadingBmp = BitmapFactory.decodeResource(getResources(), R.drawable.imageloading);
+        sOptions.inPreferredConfig = Bitmap.Config.RGB_565;
+        mLoadingBmp = BitmapFactory.decodeResource(getResources(), R.drawable.imageloading, sOptions);
         mHorizontalSpacing = convertToPx(3);
         pLeft = getPaddingLeft();
         pTop = getPaddingTop();
     }
+
 
     /**
      * 设置图片之间的水平间距
      *
      * @param dp 单位为dp
      */
-    public void setmHorizontalSpacing(int dp) {
+    public void setHorizontalSpacing(int dp) {
         mHorizontalSpacing = convertToPx(dp);
     }
 
+    /**
+     * 设置图片集
+     *
+     * @param images
+     */
     public void setImages(List<ImageItem> images) {
         if (images.size() < 3) {
             return;
@@ -72,11 +97,6 @@ public class MultiImageView extends View {
         mImages.clear();
         this.mImages.addAll(images);
         loadImagesAsync();
-    }
-
-    public int convertToPx(int dp) {
-        final float scale = getResources().getDisplayMetrics().density;
-        return (int) (dp * scale + 0.5f);
     }
 
     /**
@@ -114,9 +134,6 @@ public class MultiImageView extends View {
         }
         invalidate();
     }
-
-    int pLeft;
-    int pTop;
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -163,26 +180,6 @@ public class MultiImageView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-//        for (int i = 0; i < mImages.size(); i++) {
-//            final ImageItem item = mImages.get(i);
-//            // 绘制图片
-//            if (item.bitmap != null) {
-//                int saveCount = canvas.getSaveCount();
-//                canvas.save();
-//                canvas.translate(pLeft, pTop);
-//                if (mDrawMatrix != null) {
-//                    canvas.concat(mDrawMatrix);
-//                }
-//                // 绘制三张图片
-//                canvas.drawBitmap(item.bitmap,
-//                        item.rect.left + i * mHorizontalSpacing, item.rect.top, mPaint);
-//                canvas.restoreToCount(saveCount);
-//            } else {
-//                // 绘制loading图
-//                canvas.drawBitmap(mLoadingBmp, item.rect.left, item.rect.top, mPaint);
-//            }
-//        }
-
         for (int i = 0; i < mImages.size(); i++) {
             final ImageItem item = mImages.get(i);
             // 绘制图片
@@ -197,5 +194,57 @@ public class MultiImageView extends View {
                     item.rect.left + i * mHorizontalSpacing, item.rect.top, mPaint);
             canvas.restoreToCount(saveCount);
         }
+    }
+
+    /**
+     * 设置loading 图片
+     *
+     * @param res
+     */
+    public void setLoadingBitmapResource(int res) {
+        if (this.mLoadingBmp != null
+                && !mLoadingBmp.isRecycled()) {
+            mLoadingBmp.recycle();
+            mLoadingBmp = null;
+        }
+        this.mLoadingBmp = BitmapFactory.decodeResource(getResources(), res, sOptions);
+        invalidate();
+    }
+
+    public void setImageClickListener(OnImageClickListener listener) {
+        this.mImageClickListener = listener;
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+            handleClickImageEvent(event);
+        }
+        return super.onTouchEvent(event);
+    }
+
+    /**
+     * 通过点击的x坐标位置判断点击的是第几张图,然后回调给调用者
+     *
+     * @param event
+     */
+    private void handleClickImageEvent(MotionEvent event) {
+        // 获取点击的位置
+        int clickIndex = (int) event.getX() / mSingleImageWidth;
+        if (mImageClickListener != null && clickIndex < mImages.size()) {
+            mImageClickListener.onClick(clickIndex);
+        }
+    }
+
+    public int convertToPx(int dp) {
+        final float scale = getResources().getDisplayMetrics().density;
+        return (int) (dp * scale + 0.5f);
+    }
+
+    /**
+     * 图片点击Listener
+     */
+    public static interface OnImageClickListener {
+        public void onClick(int position);
     }
 }

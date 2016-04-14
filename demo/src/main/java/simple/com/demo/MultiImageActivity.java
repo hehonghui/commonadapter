@@ -62,8 +62,7 @@ public class MultiImageActivity extends AppCompatActivity {
         List<ImageItem> datas = new ArrayList<>();
         for (int i = 0; i < Images.imageThumbUrls.length / 3; i++) {
             ImageItem imageItem = new ImageItem();
-            imageItem.index = i % 3;
-            imageItem.url = Images.imageThumbUrls[i] ;
+            imageItem.url = Images.imageThumbUrls[i];
             datas.add(imageItem);
         }
         return datas;
@@ -84,6 +83,12 @@ public class MultiImageActivity extends AppCompatActivity {
             protected void onBindData(RecyclerViewHolder viewHolder, int position, ImageItem item) {
                 MultiImageView imageView = (MultiImageView) viewHolder.itemView;
                 imageView.setImages(mImages.subList(position * 3, (position + 1) * 3));
+                imageView.setImageClickListener(new MultiImageView.OnImageClickListener() {
+                    @Override
+                    public void onClick(int position) {
+                        Toast.makeText(getApplicationContext(), "click image " + position, Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
@@ -93,13 +98,13 @@ public class MultiImageActivity extends AppCompatActivity {
         };
 
         // 设置RecyclerView的点击事件
-        adapter.setOnItemClickListener(new RecyclerAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(int position) {
-                Toast.makeText(MultiImageActivity.this, "Click Recycler : "
-                        + adapter.getItem(position), Toast.LENGTH_SHORT).show();
-            }
-        });
+//        adapter.setOnItemClickListener(new RecyclerAdapter.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(int position) {
+//                Toast.makeText(MultiImageActivity.this, "Click Recycler : "
+//                        + adapter.getItem(position), Toast.LENGTH_SHORT).show();
+//            }
+//        });
         recyclerView.setAdapter(adapter);
     }
 }
