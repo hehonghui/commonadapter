@@ -21,6 +21,7 @@
         </activity>
 
         <activity android:name=".MultiImageActivity" android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".MultiImageActivityListView" android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

@@ -1,12 +1,17 @@
 package simple.com.demo;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -17,24 +22,22 @@ import com.nostra13.universalimageloader.core.download.BaseImageDownloader;
 import com.simple.commonadapter.RecyclerAdapter;
 import com.simple.commonadapter.viewholders.RecyclerViewHolder;
 
+import junit.framework.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import simple.com.demo.widgets.MultiImageView;
 
 
-public class MultiImageActivity extends AppCompatActivity {
+public class MultiImageActivityListView extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_multi);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
+        setContentView(R.layout.activity_multi_list);
         initRecyclerView();
         configUniversalImageLoader();
-        startActivity(new Intent(this, MultiImageActivityListView.class));
     }
 
 
@@ -74,39 +77,46 @@ public class MultiImageActivity extends AppCompatActivity {
      * 初始化RecyclerView
      */
     private void initRecyclerView() {
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
-        // 线性
-        recyclerView.setLayoutManager(new LinearLayoutManager(MultiImageActivity.this));
-
+        ListView list = (ListView) findViewById(R.id.MyListView);
         mImages = mockImages();
-        // 初始化adapter
-        final RecyclerAdapter<ImageItem> adapter = new RecyclerAdapter<ImageItem>(R.layout.multi_image_item, mImages) {
-            @Override
-            protected void onBindData(RecyclerViewHolder viewHolder, int position, ImageItem item) {
-                MultiImageView imageView = (MultiImageView) viewHolder.itemView;
-                imageView.setImages(mImages.subList(position%10 * MultiImageView.ImageNumber, (position%10 + 1) * MultiImageView.ImageNumber));
-                imageView.setImageClickListener(new MultiImageView.OnImageClickListener() {
-                    @Override
-                    public void onClick(int position) {
-                        Toast.makeText(getApplicationContext(), "click image " + position, Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
+        list.setAdapter(new MyAdapter());
+    }
 
-            @Override
-            protected int getItemLayout(int type) {
-                return R.layout.multi_image_item;
-            }
-        };
+    class MyAdapter extends BaseAdapter{
 
-        // 设置RecyclerView的点击事件
-//        adapter.setOnItemClickListener(new RecyclerAdapter.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(int position) {
-//                Toast.makeText(MultiImageActivity.this, "Click Recycler : "
-//                        + adapter.getItem(position), Toast.LENGTH_SHORT).show();
-//            }
-//        });
-        recyclerView.setAdapter(adapter);
+        @Override
+        public int getCount() {
+            return 150;
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if(convertView==null)
+            {
+                convertView= LayoutInflater.from(MultiImageActivityListView.this).inflate(R.layout.list_item_type_3,null);
+            }
+            MultiImageView imageView = (MultiImageView) convertView.findViewById(R.id.multi);
+            imageView.setImages(mImages.subList(position%5 * MultiImageView.ImageNumber, (position%5 + 1) * MultiImageView.ImageNumber));
+            imageView.setImageClickListener(new MultiImageView.OnImageClickListener() {
+                @Override
+                public void onClick(int position) {
+                    Toast.makeText(getApplicationContext(), "click image " + position, Toast.LENGTH_SHORT).show();
+                }
+            });
+//          TextView t=  new TextView(MultiImageActivityListView.this);
+//            t.setText("111111111111111");
+//            return t;
+            return convertView;
+        }
     }
 }

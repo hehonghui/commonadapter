@@ -28,6 +28,10 @@ import simple.com.demo.R;
  */
 public class MultiImageView extends View {
     /**
+     * 显示图片总数
+     */
+    public static final int ImageNumber=2;
+    /**
      * 图片集合
      */
     private List<ImageItem> mImages = new ArrayList<>();
@@ -46,7 +50,7 @@ public class MultiImageView extends View {
     /**
      * 图片矩阵对象,用于对图片进行缩放
      */
-    private Matrix mDrawMatrix = new Matrix();
+//    private Matrix mDrawMatrix = new Matrix();
     /**
      * 图片之间的水平间距
      */
@@ -70,7 +74,7 @@ public class MultiImageView extends View {
         super(context, attrs, defStyleAttr);
         sOptions.inPreferredConfig = Bitmap.Config.RGB_565;
         mLoadingBmp = BitmapFactory.decodeResource(getResources(), R.drawable.imageloading, sOptions);
-        mHorizontalSpacing = convertToPx(3);
+        mHorizontalSpacing = convertToPx(ImageNumber);
         pLeft = getPaddingLeft();
         pTop = getPaddingTop();
     }
@@ -91,7 +95,7 @@ public class MultiImageView extends View {
      * @param images
      */
     public void setImages(List<ImageItem> images) {
-        if (images.size() < 3) {
+        if (images.size() < ImageNumber) {
             return;
         }
         mImages.clear();
@@ -139,17 +143,22 @@ public class MultiImageView extends View {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         // 用来显示三章图片的完整区域
-        int totalWidth = (getMeasuredWidth() - getPaddingLeft() - getPaddingRight() - mHorizontalSpacing * 3);
-        mSingleImageWidth = totalWidth / 3;
+        int totalWidth = (getMeasuredWidth() - getPaddingLeft() - getPaddingRight() - mHorizontalSpacing * (ImageNumber-1));
+        mSingleImageWidth = totalWidth / ImageNumber;
         mViewHeight = getMeasuredHeight();
         // 每张图片的位置以及宽高
         for (int i = 0; i < mImages.size(); i++) {
             final ImageItem item = mImages.get(i);
-            // 设置该图绘制的位置, 这里的240为图片的宽度
-            item.rect.set(pLeft + i * 240, pTop,
-                    pLeft + 240 * (i + 1), pTop + mViewHeight);
             // 计算变换矩阵
             calculateMartrx(item);
+            float leftDraw=(i * (mHorizontalSpacing + mSingleImageWidth)) / item.scaleW;
+            float topDraw=item.rect.top;
+            float rightDraw=leftDraw+mSingleImageWidth/item.scaleW;
+            float bottomDeaw=topDraw+(getMeasuredHeight() - getPaddingTop() - getPaddingBottom()) / item.scaleW;
+            // 设置该图绘制的位置, 图片的绘制位置参数会跟随matrix参数的scale 同步放大缩小，比如如果绘制起点是100px处同时matrix.scale=0.5
+//            则实际绘制中绘制起点在50px处
+            item.rect.set((int)leftDraw, (int)topDraw,
+                    (int)rightDraw, (int)bottomDeaw);
         }
     }
 
@@ -160,22 +169,23 @@ public class MultiImageView extends View {
      */
     private void calculateMartrx(ImageItem image) {
         float scale;
-        float dx = 0, dy = 0;
-        int dwidth = image.getWidth();
-        int dheight = image.getHeight();
+        float dwidth = image.bitmap.getWidth();
+        float dheight = image.bitmap.getHeight();
         int vwidth = mSingleImageWidth;
         int vheight = getMeasuredHeight() - getPaddingTop() - getPaddingBottom();
 
         if (dwidth * vheight > vwidth * dheight) {
             scale = (float) vheight / (float) dheight;
-            dx = (vwidth - dwidth * scale) * 0.5f;
         } else {
             scale = (float) vwidth / (float) dwidth;
-            dy = (vheight - dheight * scale) * 0.5f;
         }
-
+        Matrix mDrawMatrix = new Matrix();
         mDrawMatrix.setScale(scale, scale);
-        mDrawMatrix.postTranslate(Math.round(dx), Math.round(dy));
+        image.matrix=mDrawMatrix;
+        image.scaleW=scale;
+
+
+
     }
 
     @Override
@@ -186,12 +196,17 @@ public class MultiImageView extends View {
             int saveCount = canvas.getSaveCount();
             canvas.save();
             canvas.translate(pLeft, pTop);
-            if (mDrawMatrix != null) {
-                canvas.concat(mDrawMatrix);
+            if (item.matrix != null) {
+                canvas.concat(item.matrix);
             }
+            // 设置该图绘制的区域, 图片的绘制区域参数会跟随matrix参数的scale 同步放大缩小，比如如果绘制起点是100px处同时matrix.scale=0.5
+//            则实际绘制中绘制起点在50px处
+            canvas.clipRect(item.rect);
             // 绘制三张图片
+            //  canvas.drawBitmap(）中绘制起点位置随matrix参数的scale 同步放大缩小,比如如果绘制起点是100px处同时matrix.scale=0.5
+//            则实际绘制中绘制起点在50px处
             canvas.drawBitmap(item.bitmap,
-                    item.rect.left + i * mHorizontalSpacing, item.rect.top, mPaint);
+                    item.rect.left, item.rect.top, mPaint);
             canvas.restoreToCount(saveCount);
         }
     }

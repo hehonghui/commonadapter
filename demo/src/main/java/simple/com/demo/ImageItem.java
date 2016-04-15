@@ -1,6 +1,7 @@
 package simple.com.demo;
 
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.graphics.Rect;
 
 /**
@@ -9,13 +10,15 @@ import android.graphics.Rect;
 public class ImageItem {
     public String url = "";
     public Rect rect = new Rect();
-    public Bitmap bitmap ;
-
+    public Bitmap bitmap;
+    public float scaleW = 1;
+    public float scaleH = 1;
+    public Matrix matrix = null;
     public int getWidth() {
-        return rect.width() ;
+        return rect.width();
     }
 
     public int getHeight() {
-        return rect.height() ;
+        return rect.height();
     }
 }
